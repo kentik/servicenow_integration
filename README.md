@@ -26,6 +26,14 @@ Before importing into production, review the package in a non-production Service
 
 Configure Kentik to send alerts to ServiceNow using the ServiceNow notification channel and Events API payload. The ServiceNow package expects Kentik alert metadata to be available so it can link ServiceNow records back to the originating Kentik alert.
 
+## Authorization Model
+
+This self-managed integration uses the Kentik API credential configured by the ServiceNow administrator. Actions performed through the integration use that Kentik identity, even when different ServiceNow users trigger those actions from incidents, alerts, flows, or UI actions.
+
+Use a dedicated least-privilege Kentik user for this integration. This should be a regular Kentik user reserved for the ServiceNow integration, with only the Kentik permissions needed for the workflows you enable, such as AI investigation, alert comments, acknowledge, clear, and incident context updates. If a workflow is not needed, leave the related ServiceNow flow, trigger, or UI action inactive or unavailable.
+
+ServiceNow roles, ACLs, and application access controls still determine who can view or use ServiceNow records and actions, but they do not automatically map each ServiceNow user to a distinct Kentik user. Administrators should restrict integration configuration and Kentik-affecting actions to trusted users whose ServiceNow access is appropriate for the Kentik permissions exposed by the configured credential.
+
 ## License
 
 This project is licensed under the Apache License 2.0. See `LICENSE` for details.
