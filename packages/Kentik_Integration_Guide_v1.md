@@ -30,6 +30,10 @@ For the integration to correctly identify and link alerts, the data sent from Ke
 ### 3. Configuration (Administrative Setup)
 The integration uses a dedicated settings page to manage authentication via System Properties. Treat the API token as a secret and restrict access to the configuration/token property to administrators only.
 
+The configured Kentik API user is also the Kentik identity used by the imported flows and UI actions. If multiple ServiceNow users trigger Kentik actions, those Kentik API calls still run with the same configured Kentik credential.
+
+Use a dedicated least-privilege Kentik user for this integration. This should be a regular Kentik user reserved for the ServiceNow integration, with only the Kentik permissions required for the workflows you activate, such as AI investigation, alert comments, acknowledge, clear, and incident context updates. ServiceNow roles and ACLs should restrict Kentik-affecting UI actions and configuration pages to trusted users.
+
 1.  Navigate to **Kentik Integration** > **Configuration**.
 2.  **Portal Base URL:** Enter your Kentik UI instance URL (e.g., `https://portal.kentik.com`).
 3.  **API Base URL:** Enter the endpoint used for API calls (e.g., `https://grpc.api.kentik.com`).
