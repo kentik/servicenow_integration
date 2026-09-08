@@ -37,8 +37,8 @@ The integration accepts inbound API calls secured by a REST API key. Treat this 
 
 1.  Navigate to **System Web Services** > **API Access Policies** > **REST API Key** > **New**.
 2.  Give the key a name.
-3.  Create a user tied to it.
-3.  **Submit**, then copy down the generated token — this is the API key value Kentik needs on every request.
+3.  Create a new user then tie to the user to the API key. When creating the user, give it User ID, First name and Last name. Make Identity type **Machine** and check **Internal Integration User**.
+3.  **Submit**. Select the created API key, copy down the generated token — this is the API key value Kentik needs on every request.
 4.  Navigate to **System Security** > **Users and Groups** > **Users**, filter for the user created in step 2, and open it.
 5.  Edit **Roles** and assign the `x_2088674_kentik_0.kentik_metadata_syncer` role to it — this is what grants the API user access to the staging table and `sys_dictionary`.
 6.  **Endpoint to send device data to:**
@@ -76,4 +76,3 @@ Only a subset of the staging table's columns are currently mapped onto the CI re
 ### 6. Maintenance & Support
 * **Import Logs:** Check **System Import Sets** > **Load History**, or open a row on the `kentik_devices` staging table and view **Related Links** > **Transform History** for per-record transform status and errors.
 * **Access Errors (401/403):** Confirm the caller is sending the correct token for the REST API Key created in section 3, and that the user tied to that key is assigned the `x_2088674_kentik_0.kentik_metadata_syncer` role.
-* **Lost token:** The REST API Key token can only be viewed once, at creation time. If it's lost, create a new REST API Key (or regenerate the existing one) and update the Kentik-side export job with the new value.
