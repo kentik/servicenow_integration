@@ -2,7 +2,7 @@
 
 This package is Kentik's reference integration for syncing device metadata into the ServiceNow CMDB. It is distributed as a ServiceNow update set XML file that can be imported into a customer-managed ServiceNow instance.
 
-The imported package provides a staging (import set) table, a transform map, and the API access policies/roles needed to accept Kentik device data and turn it into `cmdb_ci_netgear` configuration items.
+The imported package provides a staging (import set) table, a transform map, and the role needed to accept Kentik device data and turn it into `cmdb_ci_netgear` configuration items. Authentication (the REST API Key and its access policy) is set up manually after import — see the deployment guide.
 
 ## Integration Capabilities
 
@@ -26,7 +26,13 @@ Configure a Kentik-side export process that reads device metadata from the Kenti
 
 ## Authorization Model
 
-This self-managed integration uses a dedicated ServiceNow role, `x_2088674_kentik_0.kentik_metadata_syncer`, scoped to the minimum access needed to post device data (CRUD on the staging table, plus read on `sys_dictionary` to look up table columns) and read back the resulting CI records. Assign this role only to the user created alongside the REST API Key used by the Kentik-side export job — do not use an administrator account for this integration.
+This self-managed integration uses a dedicated ServiceNow role, `x_2088674_kentik_0.kentik_metadata_syncer`. The role is not grantable or delegable, so it can only be assigned to a user by an administrator. Its actual permissions are:
+
+* **Staging table** (`x_2088674_kentik_0_u_kentik_devices`): create, read, and write (write is required so that field values submitted on insert are actually persisted — `create` alone only permits an empty row), but not delete. The role has no way to delete staged rows, and the only exposed entry point (the Import Set `insertMultiple` API) always inserts a new row rather than updating an existing one — re-sending a device simply inserts a new staging row, which the transform map then reconciles into the CI record.
+* **`cmdb_ci_netgear`**: read access to the entire table (not scoped to Kentik-managed records). This is intentionally broad so integration tests can read back and verify any CI written by the transform map; if your environment doesn't need that read-back, consider further restricting or removing this ACL.
+* **`sys_dictionary`**: read-only, used to look up the available columns on a given table.
+
+Assign this role only to the user created alongside the REST API Key used by the Kentik-side export job — do not use an administrator account for this integration.
 
 ## License
 
