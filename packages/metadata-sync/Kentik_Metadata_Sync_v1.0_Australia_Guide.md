@@ -30,7 +30,8 @@ The XML config file is built with ServiceNow Studio and is named `Kentik_Metadat
 1. Creates a role, `x_2088674_kentik_0.kentik_metadata_syncer`, with create, write, and read permission on the staging table `x_2088674_kentik_0_u_kentik_devices` (write is required so field values submitted on insert are actually persisted — create alone only permits an empty row), plus read permission on `sys_dictionary` (so the role can look up the available columns for a given table) and read permission on `cmdb_ci_netgear`.
 2. Creates the staging table, pre-populated with the Kentik device columns.
 3. Creates a default transform map that converts staging rows into `cmdb_ci_netgear` records.
-4. Does **not** set up authentication for you — the REST API Key, its access policy, and the integration user are created manually as part of Section 3 below.
+4. Installs the inbound authentication configuration: the **Kentik Rest API Key Auth Profile**, **Kentik Basic Auth Profile**, and **Kentik OAuth Profile**, plus two REST API access policies: **Kentik Metadata Import Policy** (Import Set API) and **Kentik Metadata View Policy** (Table API). Both API access policies are described in the README's Inbound Authentication and API Access Policies section. The View Policy is scoped to the staging table. The Import Policy covers all tables, and it accepts the REST API key, Basic, and OAuth profiles.
+5. Does **not** create the API key token or the integration user. These are created or assigned manually as part of Section 3 below.
 
 ---
 
