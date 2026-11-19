@@ -2,7 +2,7 @@
 
 This package is Kentik's reference integration for syncing device metadata into the ServiceNow CMDB. It is distributed as a ServiceNow update set XML file that can be imported into a customer-managed ServiceNow instance.
 
-The imported package provides a staging (import set) table, a transform map, and the role needed to accept Kentik device data and turn it into `cmdb_ci_netgear` configuration items. Authentication (the REST API Key and its access policy) is set up manually after import — see the deployment guide.
+The imported package provides a staging (import set) table, a transform map, the role needed to accept Kentik device data and turn it into `cmdb_ci_netgear` configuration items, and the inbound authentication profiles and API access policies that let Kentik call the staging table. The REST API key token and the integration user are still created manually after import — see the deployment guide.
 
 ## Integration Capabilities
 
@@ -23,6 +23,19 @@ Before importing into production, review the package in a non-production Service
 ## Kentik Configuration
 
 Configure a Kentik-side export process that reads device metadata from the Kentik API and posts it to the ServiceNow Import Set API endpoint for the `x_2088674_kentik_0_u_kentik_devices` table, authenticated with the token from the REST API Key created during setup.
+
+## Inbound Authentication and API Access Policies
+
+The package installs the following inbound authentication profiles and REST API access policies:
+
+| Policy | API | Scope | Auth profiles |
+|--------|-----|-------|---------------|
+| Kentik Metadata View Policy | Table API (`now/table`) | Only the staging table `x_2088674_kentik_0_u_kentik_devices` | Kentik Rest API Key Auth Profile |
+| Kentik Metadata Import Policy | Import Set API (`now/import`) | All tables (the policy cannot be restricted to the staging table) | Kentik Rest API Key Auth Profile, Kentik Basic Auth Profile, Kentik OAuth Profile |
+
+An active API access policy also applies to the other authentication methods on the APIs it covers. The Import Set API policy therefore includes the Basic and OAuth profiles, so those callers are not blocked with a 401.
+
+Because the Import Set API policy covers all tables, Basic and OAuth callers can reach the Import Set API for any import set table, subject to their own ACLs. Keep the integration user's permissions limited to the role described below, and do not grant Basic or OAuth access to users who do not need it.
 
 ## Authorization Model
 
